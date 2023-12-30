@@ -35,6 +35,18 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="GraphShape, Version=1.2.1.0, Culture=neutral, PublicKeyToken=77ac9095553894e3, processorArchitecture=MSIL">
+      <HintPath>..\packages\GraphShape.1.2.1\lib\net45\GraphShape.dll</HintPath>
+    </Reference>
+    <Reference Include="GraphShape.Controls, Version=1.2.2.0, Culture=neutral, PublicKeyToken=77ac9095553894e3, processorArchitecture=MSIL">
+      <HintPath>..\packages\GraphShape.Controls.1.2.2\lib\net45\GraphShape.Controls.dll</HintPath>
+    </Reference>
+    <Reference Include="JetBrains.Annotations, Version=4242.42.42.42, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
+      <HintPath>..\packages\JetBrains.Annotations.2023.3.0\lib\net20\JetBrains.Annotations.dll</HintPath>
+    </Reference>
+    <Reference Include="QuikGraph, Version=2.3.0.0, Culture=neutral, PublicKeyToken=46bd58b0789759cb, processorArchitecture=MSIL">
+      <HintPath>..\packages\QuikGraph.2.3.0\lib\net45\QuikGraph.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
@@ -57,6 +69,9 @@
     </ApplicationDefinition>
     <Compile Include="Commands\ObservableClass.cs" />
     <Compile Include="Commands\RelayCommand.cs" />
+    <Compile Include="Controls\AdHocGraphLayout.cs" />
+    <Compile Include="Models\GraphShapeModel.cs" />
+    <Compile Include="Models\Vertex.cs" />
     <Compile Include="ViewModels\MainWindowVM.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -66,9 +81,6 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Models\Edge.cs" />
-    <Compile Include="Models\Graph.cs" />
-    <Compile Include="Models\Vertex.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -92,6 +104,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

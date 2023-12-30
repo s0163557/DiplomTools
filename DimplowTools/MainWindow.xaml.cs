@@ -25,5 +25,10 @@ namespace DimplowTools
         {
             InitializeComponent();
         }
+
+        private void AdHocGraphLayout_Scroll(object sender, System.Windows.Controls.Primitives.ScrollEventArgs e)
+        {
+
+        }
     }
 }

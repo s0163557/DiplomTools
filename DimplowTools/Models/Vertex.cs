@@ -1,30 +1,23 @@
-﻿using DimplowTools.Commands;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Input;
-using System.Windows.Media.Animation;
 
 namespace DimplowTools.Models
 {
-    internal class Vertex : ObservableClass
+    internal class Vertex
     {
         private int _radius;
         public int Radius
         {
-            get 
+            get
             {
                 return _radius;
             }
             set
             {
                 _radius = value;
-                OnPropertyChanged("Radius");
             }
         }
         private int _x;
@@ -37,7 +30,6 @@ namespace DimplowTools.Models
             set
             {
                 _x = value;
-                OnPropertyChanged("X");
             }
         }
         private int _y;
@@ -50,26 +42,21 @@ namespace DimplowTools.Models
             set
             {
                 _y = value;
-                OnPropertyChanged("Y");
             }
         }
-        //Мне кажется, хранить целиком Vertex это слишком дорого
-        //поэтому будем хранить там номера вершин, соответствующие номеру в массиве.
-        public List<int> NeighborsNumbers;
-
-        public Vertex(int radius, int x, int y)
+        public Vertex(int radius, int x, int y, int id)
         {
             Radius = radius;
             X = x;
             Y = y;
+            ID = id.ToString();
         }
 
-        public Thickness PositionOnCanvas
+        public string ID { get; }
+
+        public override string ToString()
         {
-            get
-            {
-                return new Thickness(X, Y, 0, 0);
-            }
+            return ID;
         }
     }
 }
