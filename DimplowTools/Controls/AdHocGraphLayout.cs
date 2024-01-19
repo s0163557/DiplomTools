@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace DimplowTools.Controls
 {
-    internal class AdHocGraphLayout : GraphLayout<Vertex, STaggedEdge<Vertex, int>, BidirectionalGraph<Vertex, STaggedEdge<Vertex, int>>>
+    internal class AdHocGraphLayout : GraphLayout<Vertex, SEdge<Vertex>, BidirectionalGraph<Vertex, SEdge<Vertex>>>
     {
     }
 }

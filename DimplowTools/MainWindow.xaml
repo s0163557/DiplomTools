@@ -6,7 +6,8 @@
         xmlns:controls="clr-namespace:GraphShape.Controls;assembly=GraphShape.Controls"
         xmlns:local="clr-namespace:DimplowTools"
         xmlns:viewModel="clr-namespace:DimplowTools.ViewModels"
-        xmlns:graphControls="clr-namespace:DimplowTools.Controls"
+        xmlns:myControls="clr-namespace:DimplowTools.Controls"
+            xmlns:layout="clr-namespace:GraphShape.Algorithms.Layout;assembly=GraphShape"
         mc:Ignorable="d"
         Title="MainWindow" Height="600" Width="1200">
 
@@ -89,6 +90,12 @@
                     Height="50" 
                     Content="Создать граф"
                     Command="{Binding GenerateGraphCommand}"/>
+                <Button 
+                    Margin="0, 10, 0, 0"
+                    Content="Button"
+                    Width="80" 
+                    Height="50"
+                    Command="{Binding SomeTestCommand}"/>
             </StackPanel>
         </Border>
 
@@ -105,16 +112,16 @@
             Grid.Column="1"
             HorizontalScrollBarVisibility="Auto"
             VerticalScrollBarVisibility="Auto">
-            <graphControls:AdHocGraphLayout
-                Graph="{Binding Path=Graph, Mode=OneWay}"
-                AsyncCompute="true"
-                graphControls:LayoutManager.ManagedLayout="True"
+            <myControls:AdHocGraphLayout
+                x:Name="GraphLayout"
                 LayoutAlgorithmType="ISOM"
-                ShowAllStates="false"
                 OverlapRemovalAlgorithmType="FSA"
-                HighlightAlgorithmType="Simple"
-            />
+                Graph="{Binding Path=Graph}"
+                AsyncCompute="true"
+                ShowAllStates="false"
+                HighlightAlgorithmType="Simple">
+            </myControls:AdHocGraphLayout>
         </ScrollViewer>
-
+        
     </Grid>
 </Window>
