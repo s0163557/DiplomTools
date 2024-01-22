@@ -4,6 +4,7 @@ using QuikGraph;
 using QuikGraph.Algorithms;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -78,6 +79,7 @@ namespace DimplowTools.Models
             OnPropertyChanged();
         }
 
+        //Часть А
         public int FindSingletoneCut()
         {
             List<Vertex> vertices = _graph.Vertices.ToList();
@@ -88,6 +90,7 @@ namespace DimplowTools.Models
             return minDegree;
         }
 
+        //Часть Б
         public int Ki(int i)
         {
             return (int)Math.Pow(2, i);
@@ -129,6 +132,49 @@ namespace DimplowTools.Models
             FindRootCut(Ki0, vertices[0]); 
 
             return resultCuts;
+        }
+
+        public int GabowAlgorithm()
+        { 
+            List <BidirectionalGraph<Vertex, SEdge<Vertex>>> spanningTreesT = new List<BidirectionalGraph<Vertex, SEdge<Vertex>>>();
+            BidirectionalGraph<Vertex,SEdge<Vertex>> forestTk = new BidirectionalGraph<Vertex, SEdge<BidirectionalGraph<Vertex, SEdge<Vertex>>();
+            List <Vertex> vertices = _graph.Vertices.ToList();
+            List <int> treesDepth = new List<int>();
+            int i;
+            for (i = 0; i < vertices.Capacity; i++)
+            {
+                BidirectionalGraph<Vertex, SEdge<Vertex>> temp = new BidirectionalGraph<Vertex, SEdge<Vertex>>();
+                temp.AddVertex(vertices[i]);
+                treesDepth.Add(1);
+                spanningTreesT.Add(temp);
+                forestTk.AddVertex(vertices[i]);
+            }
+            spanningTreesT.Add(forestTk);
+            GabowRoundStep(spanningTreesT);
+        }
+
+        private void GabowRoundStep(List<BidirectionalGraph<Vertex, SEdge<Vertex>>> spanningTreesT)
+        {
+            if (spanningTreesT[spanningTreesT.Count - 1].EdgeCount == spanningTreesT[0].VertexCount - 1)
+                throw new Exception("Забыл сделать условие выхода");
+            
+            List<bool> isTreeActive = new List<bool>();
+            for (int i = 1; i < spanningTreesT.Count; i++)
+                isTreeActive.Add(true);
+            GabowAugmentStep(isTreeActive);
+        }
+
+        private void GabowAugmentStep(List<bool> isTreeActive)
+        {
+            for (int i = 1; i < isTreeActive.Count; i++)
+            {
+                while (isTreeActive[i])
+                    GabowSearchStep();
+            }
+        }
+        private void GabowSearchStep()
+        { 
+            
         }
     }
 }
