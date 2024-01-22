@@ -135,44 +135,51 @@ namespace DimplowTools.Models
         }
 
         public int GabowAlgorithm()
-        { 
-            List <BidirectionalGraph<Vertex, SEdge<Vertex>>> spanningTreesT = new List<BidirectionalGraph<Vertex, SEdge<Vertex>>>();
-            BidirectionalGraph<Vertex,SEdge<Vertex>> forestTk = new BidirectionalGraph<Vertex, SEdge<BidirectionalGraph<Vertex, SEdge<Vertex>>();
+        {
+            BidirectionalGraph<Vertex, STaggedEdge<Vertex, int>> resultTreeT = new BidirectionalGraph<Vertex, STaggedEdge<Vertex, int>>();
+            List <BidirectionalGraph<Vertex, STaggedEdge<Vertex, int>>> spanningTreesTi = new List<BidirectionalGraph<Vertex, STaggedEdge<Vertex, int>>>();
+            BidirectionalGraph<Vertex, STaggedEdge<Vertex, int>> forestTk = new BidirectionalGraph<Vertex, STaggedEdge<Vertex, int>>();
             List <Vertex> vertices = _graph.Vertices.ToList();
             List <int> treesDepth = new List<int>();
             int i;
             for (i = 0; i < vertices.Capacity; i++)
             {
-                BidirectionalGraph<Vertex, SEdge<Vertex>> temp = new BidirectionalGraph<Vertex, SEdge<Vertex>>();
+                BidirectionalGraph<Vertex, STaggedEdge<Vertex, int>> temp = new BidirectionalGraph<Vertex, STaggedEdge<Vertex, int>>();
                 temp.AddVertex(vertices[i]);
                 treesDepth.Add(1);
-                spanningTreesT.Add(temp);
+                spanningTreesTi.Add(temp);
                 forestTk.AddVertex(vertices[i]);
             }
-            spanningTreesT.Add(forestTk);
-            GabowRoundStep(spanningTreesT);
+            spanningTreesTi.Add(forestTk);
+            GabowRoundStep(spanningTreesTi);
         }
 
-        private void GabowRoundStep(List<BidirectionalGraph<Vertex, SEdge<Vertex>>> spanningTreesT)
+        private void GabowRoundStep(List<BidirectionalGraph<Vertex, STaggedEdge<Vertex, int>>> spanningTreesTi)
         {
-            if (spanningTreesT[spanningTreesT.Count - 1].EdgeCount == spanningTreesT[0].VertexCount - 1)
+            if (spanningTreesTi[spanningTreesTi.Count - 1].EdgeCount == spanningTreesTi[0].VertexCount - 1)
                 throw new Exception("Забыл сделать условие выхода");
             
             List<bool> isTreeActive = new List<bool>();
-            for (int i = 1; i < spanningTreesT.Count; i++)
+            //Нашей выделенной вершиной а будет вершина, находящася в 0-ом графе, поэтому мы его пропускаем.
+            for (int i = 1; i < spanningTreesTi.Count; i++)
                 isTreeActive.Add(true);
-            GabowAugmentStep(isTreeActive);
+            GabowAugmentStep(isTreeActive, spanningTreesTi);
         }
 
-        private void GabowAugmentStep(List<bool> isTreeActive)
+        private void GabowAugmentStep(List<bool> isTreeActive, List<BidirectionalGraph<Vertex, STaggedEdge<Vertex, int>>> spanningTreesTi)
         {
-            for (int i = 1; i < isTreeActive.Count; i++)
-            {
-                while (isTreeActive[i])
-                    GabowSearchStep();
-            }
+            GabowSearchStepInitialazing(spanningTreesTi);
         }
-        private void GabowSearchStep()
+        private void GabowSearchStepInitialazing(List<BidirectionalGraph<Vertex, STaggedEdge<Vertex, int>>> spanningTreesTi)
+        {
+            STaggedEdge<Vertex, int> g = new STaggedEdge<Vertex, int>();
+            int i = 0, l = -1;
+            List<STaggedEdge<Vertex, int>> Q = new List<STaggedEdge<Vertex, int>>();
+            //Начнём обходить деревья с нулевого
+            for (int j = 0; j < )
+        }
+
+        private void LabelStep(List<BidirectionalGraph<Vertex, STaggedEdge<Vertex, int>>> spanningTreesTi)
         { 
             
         }
