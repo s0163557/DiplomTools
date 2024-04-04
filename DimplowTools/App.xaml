@@ -2,8 +2,18 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:DimplowTools"
+             xmlns:ViewModel="clr-namespace:DimplowTools.ViewModels"
+             xmlns:View="clr-namespace:DimplowTools.Views"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+
+        <DataTemplate DataType="{x:Type ViewModel:DirectedGraphVM}">
+            <View:DirectedGraphView/>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type ViewModel:UndirectedGraphVM}">
+            <View:UndirectedGraphView/>
+        </DataTemplate>
+
     </Application.Resources>
 </Application>

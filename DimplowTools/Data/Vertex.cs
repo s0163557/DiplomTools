@@ -49,14 +49,15 @@ namespace DimplowTools.Models
             Radius = radius;
             X = x;
             Y = y;
-            ID = id.ToString();
+            ID = id;
         }
 
-        public string ID { get; }
+        public string Label;
+        public int ID { get; }
 
         public override string ToString()
         {
-            return ID;
+            return ID.ToString();
         }
     }
 }

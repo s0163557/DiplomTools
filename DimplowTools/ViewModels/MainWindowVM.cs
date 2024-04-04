@@ -13,71 +13,39 @@ namespace DimplowTools.ViewModels
 {
     internal class MainWindowVM : ObservableClass
     {
-        private BidirectionalGraph<Vertex, SEdge<Vertex>> _graph = new BidirectionalGraph<Vertex, SEdge<Vertex>>();
-        private GraphShapeModel _graphShapeModel;
-        public BidirectionalGraph<Vertex, SEdge<Vertex>> Graph
+        public RelayCommand OpenDirectedGraphView { get; set; }
+        public RelayCommand OpenUndirectedGraphView { get; set; }
+
+        public DirectedGraphVM DirectedGraphVM { get; set; }
+        public UndirectedGraphVM UndirectedGraphVM { get; set; }
+
+        private object _viewModel = null;
+        public object CurrentVM
         {
-            get 
-            { 
-                return _graph;
-            }
-            set 
+            get { return _viewModel; }
+            set
             {
-                _graph = value;
+                _viewModel = value;
                 OnPropertyChanged();
-            } 
+            }
         }
 
-        private int _fieldSize = 1000;
-        public int FieldSize
-        { 
-            get { return _fieldSize; }
-            set { _fieldSize = value; }
-        }
-
-        private int _vertexAmount = 20;
-        public int VertexAmount
-        {
-            get { return _vertexAmount; }
-            set { _vertexAmount = value; }
-        }
-
-        private int _minRadius = 200;
-        public int MinRadius
-        {
-            get { return _minRadius; }
-            set { _minRadius = value; }
-        }
-
-        private int _maxRadius = 300;
-        public int MaxRadius
-        {
-            get { return _maxRadius; }
-            set { _maxRadius = value; }
-        }
-
-        public RelayCommand GenerateGraphCommand { get; set; }
-        public RelayCommand SomeTestCommand { get; set; }
         public MainWindowVM()
-        {
-            _graphShapeModel = GraphShapeModel.GetInstance();
-
-            _graphShapeModel.PropertyChanged += (o, s) =>
+        { 
+            DirectedGraphVM = new DirectedGraphVM();
+            UndirectedGraphVM = new UndirectedGraphVM();
+            CurrentVM = DirectedGraphVM;
+            OpenDirectedGraphView = new RelayCommand((o) => 
             {
-                Graph = _graphShapeModel.Graph;
-            };  
-
-            SomeTestCommand = new RelayCommand(o =>
-            {
-                _graphShapeModel.FindSinkCuts();
+                CurrentVM = DirectedGraphVM;
+                OnPropertyChanged();
             });
-
-            GenerateGraphCommand = new RelayCommand(o =>
+            OpenUndirectedGraphView = new RelayCommand((o) =>
             {
-                _graphShapeModel.GenerateVertices(VertexAmount, MinRadius, MaxRadius, FieldSize);
-                _graphShapeModel.GenerateEdges();
+                CurrentVM = UndirectedGraphVM;
+                OnPropertyChanged();
             });
-
         }
+        
     }
 }

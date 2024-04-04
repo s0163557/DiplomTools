@@ -1,4 +1,5 @@
 ﻿using DimplowTools.Commands;
+using GraphShape.Controls;
 using GraphShape.Utils;
 using QuikGraph;
 using QuikGraph.Algorithms;
@@ -6,22 +7,15 @@ using System;
 using System.Collections.Generic;
 using System.Data.SqlTypes;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace DimplowTools.Models
 {
-    internal class GraphShapeModel : ObservableClass
+    internal class UndirectedGraphModel : ObservableClass
     {
-        private static GraphShapeModel _graphShapeModel;
-        private GraphShapeModel()
-        { }
-        public static GraphShapeModel GetInstance()
-        {
-            if (_graphShapeModel == null)
-                _graphShapeModel = new GraphShapeModel();
-            return _graphShapeModel;
-        }
 
         BidirectionalGraph<Vertex, SEdge<Vertex>> _graph;
         public BidirectionalGraph<Vertex, SEdge<Vertex>> Graph
@@ -38,17 +32,16 @@ namespace DimplowTools.Models
             for (index = 0; index < size; index++)
                 _field[index] = new int[size];
         }
-        public void GenerateVertices(int amount, int minRadius, int maxRadius, int size = 10000)
+
+        public void GenerateUndirectedVertices(int amount, int radius, int size = 10000)
         {
             int index;
             Random random = new Random();
-            if (_field == null)
-                CreateField(size);
-            int radius, x, y;
+            CreateField(size);
+            int x, y;
             _graph = new BidirectionalGraph<Vertex, SEdge<Vertex>>();
             for (index = 0; index < amount; index++)
             {
-                radius = random.Next(minRadius, maxRadius);
                 do
                 {
                     x = random.Next(_field.Length);
@@ -59,7 +52,7 @@ namespace DimplowTools.Models
             }
         }
 
-        public void GenerateEdges()
+        public void GenerateUndirectedEdges()
         {
             List<Vertex> vertices = _graph.Vertices.ToList();
             int index1, index2;
@@ -78,7 +71,6 @@ namespace DimplowTools.Models
             }
             OnPropertyChanged();
         }
-
         //Часть А
         public int FindSingletoneCut()
         {
@@ -129,59 +121,58 @@ namespace DimplowTools.Models
             //Переберём все вершины, сразу авансом для функции связности
             List<int> resultCuts = new List<int>();
             List<Vertex> vertices = _graph.Vertices.ToList();
-            FindRootCut(Ki0, vertices[0]); 
-
+            FindRootCut(Ki0, vertices[0]);
             return resultCuts;
         }
 
-        public int GabowAlgorithm()
+        private bool[] HelperDFS(Vertex vertex, bool[] visited)
         {
-            BidirectionalGraph<Vertex, STaggedEdge<Vertex, int>> resultTreeT = new BidirectionalGraph<Vertex, STaggedEdge<Vertex, int>>();
-            List <BidirectionalGraph<Vertex, STaggedEdge<Vertex, int>>> spanningTreesTi = new List<BidirectionalGraph<Vertex, STaggedEdge<Vertex, int>>>();
-            BidirectionalGraph<Vertex, STaggedEdge<Vertex, int>> forestTk = new BidirectionalGraph<Vertex, STaggedEdge<Vertex, int>>();
-            List <Vertex> vertices = _graph.Vertices.ToList();
-            List <int> treesDepth = new List<int>();
-            int i;
-            for (i = 0; i < vertices.Capacity; i++)
+            visited[vertex.ID] = true;
+            foreach (Vertex neighbor in _graph.GetNeighbors(vertex))
             {
-                BidirectionalGraph<Vertex, STaggedEdge<Vertex, int>> temp = new BidirectionalGraph<Vertex, STaggedEdge<Vertex, int>>();
-                temp.AddVertex(vertices[i]);
-                treesDepth.Add(1);
-                spanningTreesTi.Add(temp);
-                forestTk.AddVertex(vertices[i]);
+                if (!visited[neighbor.ID])
+                    visited = HelperDFS(neighbor, visited);
             }
-            spanningTreesTi.Add(forestTk);
-            GabowRoundStep(spanningTreesTi);
+            return visited;
         }
 
-        private void GabowRoundStep(List<BidirectionalGraph<Vertex, STaggedEdge<Vertex, int>>> spanningTreesTi)
+        public bool DFS()
         {
-            if (spanningTreesTi[spanningTreesTi.Count - 1].EdgeCount == spanningTreesTi[0].VertexCount - 1)
-                throw new Exception("Забыл сделать условие выхода");
-            
-            List<bool> isTreeActive = new List<bool>();
-            //Нашей выделенной вершиной а будет вершина, находящася в 0-ом графе, поэтому мы его пропускаем.
-            for (int i = 1; i < spanningTreesTi.Count; i++)
-                isTreeActive.Add(true);
-            GabowAugmentStep(isTreeActive, spanningTreesTi);
+            bool[] visited = new bool[_graph.VertexCount];
+            visited = HelperDFS(_graph.Vertices.First(), visited);
+            foreach (bool item in visited)
+                if (!item)
+                    return false;
+            return true;
         }
 
-        private void GabowAugmentStep(List<bool> isTreeActive, List<BidirectionalGraph<Vertex, STaggedEdge<Vertex, int>>> spanningTreesTi)
+        public List<int> EdgesForDLL()
         {
-            GabowSearchStepInitialazing(spanningTreesTi);
-        }
-        private void GabowSearchStepInitialazing(List<BidirectionalGraph<Vertex, STaggedEdge<Vertex, int>>> spanningTreesTi)
-        {
-            STaggedEdge<Vertex, int> g = new STaggedEdge<Vertex, int>();
-            int i = 0, l = -1;
-            List<STaggedEdge<Vertex, int>> Q = new List<STaggedEdge<Vertex, int>>();
-            //Начнём обходить деревья с нулевого
-            for (int j = 0; j < )
+            List<SEdge<Vertex>> graphEdges = _graph.Edges.ToList();
+            List<int> correctEdges = new List<int>();
+            for (int i = 0; i < _graph.EdgeCount; i++)
+            {
+                if (graphEdges[i].Target.ID > graphEdges[i].Source.ID)
+                {
+                    correctEdges.Add(graphEdges[i].Source.ID);
+                    correctEdges.Add(graphEdges[i].Target.ID);
+                    correctEdges.Add(1);
+                }
+            }
+            return correctEdges;
         }
 
-        private void LabelStep(List<BidirectionalGraph<Vertex, STaggedEdge<Vertex, int>>> spanningTreesTi)
-        { 
-            
+        public int FindOneVertexCut()
+        {
+            int mincut = int.MaxValue;
+            for (int i = 0; i < _graph.VertexCount; i++)
+            {
+                int currentVertexCut = _graph.OutEdges(_graph.Vertices.ElementAt(i)).Count();
+                if (currentVertexCut < mincut)
+                    mincut = currentVertexCut;
+            }
+            return mincut;
         }
+
     }
 }

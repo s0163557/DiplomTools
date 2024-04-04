@@ -1,4 +1,5 @@
-﻿using DimplowTools.Models;
+﻿using DimplowTools.Data;
+using DimplowTools.Models;
 using GraphShape.Controls;
 using QuikGraph;
 using System;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace DimplowTools.Controls
 {
-    internal class AdHocGraphLayout : GraphLayout<Vertex, SEdge<Vertex>, BidirectionalGraph<Vertex, SEdge<Vertex>>>
+    internal class DirectedGraphLayout : GraphLayout<Vertex, DirectedEdge<Vertex>, BidirectionalGraph<Vertex, DirectedEdge<Vertex>>>
     {
     }
 }
