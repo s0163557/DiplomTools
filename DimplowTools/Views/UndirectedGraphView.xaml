@@ -1,0 +1,163 @@
+﻿<UserControl x:Class="DimplowTools.Views.UndirectedGraphView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:DimplowTools.Views"
+             xmlns:myControls="clr-namespace:DimplowTools.Controls"
+             mc:Ignorable="d" 
+             xmlns:localCommands="clr-namespace:DimplowTools.Commands" xmlns:viewmodels="clr-namespace:DimplowTools.ViewModels" d:DataContext="{d:DesignInstance Type=viewmodels:UndirectedGraphVM}"
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <localCommands:Converter x:Key="simpleConverter" />
+
+        <Style x:Key="CustomErrorControlOnErrorStyle" TargetType="Button">
+            <Setter Property="Validation.ErrorTemplate">
+                <Setter.Value>
+                    <ControlTemplate>
+                        <StackPanel>
+                            <AdornedElementPlaceholder x:Name="placeholder" />
+                            <TextBlock FontSize="11" FontStyle="Italic" Foreground="Red"
+                                       Text="{Binding ElementName=placeholder}" />
+                        </StackPanel>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+            <ColumnDefinition Width="5*"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+
+        <Border
+            Margin="10, 10, 0, 10"
+            BorderBrush="Black"
+            BorderThickness="0.5"
+            CornerRadius="5">
+
+            <StackPanel>
+
+                <StackPanel 
+                    Orientation="Horizontal"
+                    Margin="0, 10, 0, 10"
+                    HorizontalAlignment="Center">
+                    <Label
+                        Content="Размер поля:"/>
+                    <TextBox
+                        Text="{Binding FieldSize}"
+                        TextAlignment="Center"
+                        VerticalAlignment="Center"
+                        BorderThickness="0"/>
+                </StackPanel>
+
+                <StackPanel 
+                    Orientation="Horizontal"
+                    Margin="0, 0, 0, 10"
+                    HorizontalAlignment="Center">
+                    <Label
+                        Content="Количество вершин:"/>
+                    <TextBox
+                        Text="{Binding VertexAmount}"
+                        TextAlignment="Center"
+                        VerticalAlignment="Center"
+                        BorderThickness="0"/>
+                </StackPanel>
+
+                <StackPanel 
+                    Orientation="Horizontal"
+                    Margin="0, 0, 0, 10"
+                    HorizontalAlignment="Center">
+                    <Label
+                        Content="Радиус вершины:"
+                        HorizontalContentAlignment="Center"
+                        VerticalContentAlignment="Center"/>
+                    <TextBox
+                        Text="{Binding MinRadius}"
+                        TextAlignment="Center"
+                        VerticalAlignment="Center"
+                        BorderThickness="0"/>
+                </StackPanel>
+
+                <Button 
+                    Width="85" 
+                    Height="50" 
+                    Content="Создать граф"
+                    Command="{Binding GenerateGraphCommand}"
+                    Style="{StaticResource CustomErrorControlOnErrorStyle}"/>
+
+                <TextBlock Text="Явлется ли граф связным?"
+                           TextWrapping="Wrap"
+                           HorizontalAlignment="Center"
+                           TextAlignment="Center"/>
+                <TextBox Text="{Binding IsGraphConnected}"
+                         BorderThickness="0"
+                         TextAlignment="Center"
+                         Background="Transparent"/>
+
+                <Button 
+                    Margin="0, 10, 0, 0"
+                        Width="85" 
+                        Height="50" 
+                    Command="{Binding FindMinCutCommand}"
+                    Style="{StaticResource CustomErrorControlOnErrorStyle}">
+                    <TextBlock
+                        Text="Найти минимальный разрез"
+                        TextAlignment="Center"
+                        TextWrapping="Wrap"/>
+                </Button>
+
+                <Label
+                    Content="Разрез от 2 вершин"/>
+                
+                <TextBox Text="{Binding GaphMinCut}"
+                         BorderThickness="0"
+                         TextAlignment="Center"
+                         Background="Transparent"/>
+
+                <Label
+                    Content="Изоляция одной вершины"/>
+
+                <TextBox Text="{Binding OneVertexCut}"
+                         BorderThickness="0"
+                         TextAlignment="Center"
+                         Background="Transparent"/>
+
+                <Label 
+                    Content="Алгоритм отображения:"
+                    Margin="5,5,5,5"/>
+                <ComboBox
+                    Margin="10,0,10,10"
+                    ItemsSource="{Binding layoutAlgorithms}"
+                    SelectedValue="{Binding CurrentAlgorithm, Mode=TwoWay}"/>
+            </StackPanel>
+        </Border>
+
+        <Grid 
+            Grid.Column="1" 
+            x:Name="CoordinateGrid">
+            <Grid.RowDefinitions>
+                <RowDefinition 
+                    Height="auto"/>
+            </Grid.RowDefinitions>
+        </Grid>
+
+        <ScrollViewer 
+            Grid.Column="1"
+            HorizontalScrollBarVisibility="Auto"
+            VerticalScrollBarVisibility="Auto">
+            <myControls:UndirectedGraphLayout
+                x:Name="GraphLayout"
+                LayoutAlgorithmType="{Binding CurrentAlgorithm}"
+                OverlapRemovalAlgorithmType="FSA"
+                Graph="{Binding Path=Graph}"
+                AsyncCompute="true"
+                ShowAllStates="false"
+                HighlightAlgorithmType="Simple">
+            </myControls:UndirectedGraphLayout>
+        </ScrollViewer>
+
+    </Grid>
+</UserControl>

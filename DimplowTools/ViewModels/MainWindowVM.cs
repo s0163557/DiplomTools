@@ -1,5 +1,10 @@
 ﻿using DimplowTools.Commands;
+using DimplowTools.Controls;
 using DimplowTools.Models;
+using GraphShape.Algorithms.Layout;
+using GraphShape.Controls;
+using JetBrains.Annotations;
+using QuikGraph;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
@@ -8,35 +13,39 @@ namespace DimplowTools.ViewModels
 {
     internal class MainWindowVM : ObservableClass
     {
-        public RelayCommand GenerateGraphCommand { get; set; }
-        private ObservableCollection<Vertex> _vertices;
-        public ObservableCollection<Vertex> Vertices 
+        public RelayCommand OpenDirectedGraphView { get; set; }
+        public RelayCommand OpenUndirectedGraphView { get; set; }
+
+        public DirectedGraphVM DirectedGraphVM { get; set; }
+        public UndirectedGraphVM UndirectedGraphVM { get; set; }
+
+        private object _viewModel = null;
+        public object CurrentVM
         {
-            get
-            {
-                return _vertices;
-            }
+            get { return _viewModel; }
             set
             {
-                _vertices = value;
+                _viewModel = value;
                 OnPropertyChanged();
             }
         }
-        public Graph CurrentGraph;
-        public int CanvasHeight { get; set; } = 600;
-        public int CanvasWidth { get; set; } = 900;
-        public MainWindowVM()
-        {
-            CurrentGraph = Graph.GetInstanse();
-            GenerateGraphCommand = new RelayCommand(o =>
-               {
-                   CurrentGraph.GenerateVertices(CanvasHeight, CanvasWidth, 30, 50, 40);
-               });
 
-            CurrentGraph.PropertyChanged += (sender, args) =>
+        public MainWindowVM()
+        { 
+            DirectedGraphVM = new DirectedGraphVM();
+            UndirectedGraphVM = new UndirectedGraphVM();
+            CurrentVM = DirectedGraphVM;
+            OpenDirectedGraphView = new RelayCommand((o) => 
             {
-                Vertices = CurrentGraph.Vertices;
-            };
+                CurrentVM = DirectedGraphVM;
+                OnPropertyChanged();
+            });
+            OpenUndirectedGraphView = new RelayCommand((o) =>
+            {
+                CurrentVM = UndirectedGraphVM;
+                OnPropertyChanged();
+            });
         }
+        
     }
 }

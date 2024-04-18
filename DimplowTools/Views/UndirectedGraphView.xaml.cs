@@ -1,5 +1,4 @@
-﻿using DimplowTools.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,21 +13,16 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace DimplowTools
+namespace DimplowTools.Views
 {
     /// <summary>
-    /// Логика взаимодействия для MainWindow.xaml
+    /// Interaction logic for UndirectedGraphView.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class UndirectedGraphView : UserControl
     {
-        public MainWindow()
+        public UndirectedGraphView()
         {
             InitializeComponent();
-        }
-
-        private void AdHocGraphLayout_Scroll(object sender, System.Windows.Controls.Primitives.ScrollEventArgs e)
-        {
-
         }
     }
 }
