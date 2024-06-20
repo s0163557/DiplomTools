@@ -91,11 +91,18 @@
     <Compile Include="Controls\UndirectedGraphLayout.cs" />
     <Compile Include="Commands\Converter.cs" />
     <Compile Include="Data\DirectedEdge.cs" />
+    <Compile Include="Data\WeightedVertex.cs" />
     <Compile Include="Models\UndirectedGraphModel.cs" />
     <Compile Include="Models\DirectedGraphModel.cs" />
     <Compile Include="Data\Vertex.cs" />
+    <Compile Include="Tools\DirectedMoveResearchPointsData.cs" />
+    <Compile Include="Tools\GraphData.cs" />
+    <Compile Include="Tools\MoveResearchPointsData.cs" />
     <Compile Include="Tools\OrlinHaoAlgorithm.cs" />
     <Compile Include="Tools\Pair.cs" />
+    <Compile Include="Tools\ResearchResult.cs" />
+    <Compile Include="Tools\UndirectedGraphData.cs" />
+    <Compile Include="Tools\WeightedOHAlgorithm.cs" />
     <Compile Include="ViewModels\DirectedGraphVM.cs" />
     <Compile Include="ViewModels\MainWindowVM.cs" />
     <Compile Include="ViewModels\UndirectedGraphVM.cs" />
@@ -152,6 +159,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Data\Pictures\folderImage.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -10,7 +10,7 @@
         xmlns:myControls="clr-namespace:DimplowTools.Controls"
             xmlns:layout="clr-namespace:GraphShape.Algorithms.Layout;assembly=GraphShape"
         mc:Ignorable="d"
-        Title="MainWindow" Height="600" Width="1200">
+        Title="MainWindow" Height="800" Width="1500">
 
     <Window.Resources>
         <localCommands:Converter x:Key="simpleConverter" />
@@ -23,7 +23,7 @@
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="5*"/>
+            <ColumnDefinition Width="7*"/>
         </Grid.ColumnDefinitions>
 
         <StackPanel Margin="10,10,10,10"
@@ -33,23 +33,29 @@
                 Margin="5, 5, 5, 5"
                 FontSize="14"
                 FontFamily="Tahoma"
-                Content="Выберите тип графа:" />
+                Content="Выберите тип исследования:" />
 
-            <RadioButton GroupName="Views"
-                         Content="Ориентированный"
+                <RadioButton GroupName="Views"
+                         Command="{Binding OpenDirectedGraphView}"
+                             IsChecked="True">
+                <TextBlock
+                    TextAlignment="Center"
+                         TextWrapping="Wrap"
+                         Text="Ориентированный граф"
                          Margin="5, 0, 5, 5"
                          FontSize="14"
-                         FontFamily="Tahoma"
-                         IsChecked="True"
-                         Command="{Binding OpenDirectedGraphView}">
+                         FontFamily="Tahoma"/>
             </RadioButton>
 
             <RadioButton  GroupName="Views"
-                         Content="Неориентированный"
+                         Command="{Binding OpenUndirectedGraphView}">
+                <TextBlock
+                    TextAlignment="Center"
+                         TextWrapping="Wrap"
+                         Text="Неориентированный граф"
                          Margin="5, 0, 5, 5"
                          FontSize="14"
-                         FontFamily="Tahoma"
-                         Command="{Binding OpenUndirectedGraphView}">
+                         FontFamily="Tahoma"/>
             </RadioButton>
 
         </StackPanel>

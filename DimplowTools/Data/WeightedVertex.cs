@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DimplowTools.Models
+namespace DimplowTools.Data
 {
-    internal class Vertex : ObservableClass
+    internal class WeightedVertex : ObservableClass
     {
         private int _radius;
         public int Radius
@@ -19,6 +19,18 @@ namespace DimplowTools.Models
             set
             {
                 _radius = value;
+            }
+        }
+        private int _x;
+        public int X
+        {
+            get
+            {
+                return _x;
+            }
+            set
+            {
+                _x = value;
             }
         }
 
@@ -60,18 +72,6 @@ namespace DimplowTools.Models
             }
         }
 
-        private int _x;
-        public int X
-        {
-            get
-            {
-                return _x;
-            }
-            set
-            {
-                _x = value;
-            }
-        }
         private int _y;
         public int Y
         {
@@ -84,37 +84,46 @@ namespace DimplowTools.Models
                 _y = value;
             }
         }
-        public Vertex(int radius, int x, int y, int id, int vertexAmount)
+        public WeightedVertex(int radius, int x, int y, int id, int signalPower)
         {
             Radius = radius;
             X = x;
             Y = y;
             ID = id;
-            for (int i = 0; i < vertexAmount; i++)
-                Neighbors.Add(i, false);
+            _signalPower = signalPower;
         }
-
-        public Dictionary<int, bool> Neighbors = new Dictionary<int, bool>();
-
 
         private int _id;
 
-        public int ID 
+        public int ID
         {
             get
-            { 
+            {
                 return _id;
             }
             set
             {
                 _id = value;
                 OnPropertyChanged();
-            } 
+            }
+        }
+
+        private int _signalPower;
+        public int SignalPower
+        {
+            get
+            {
+                return _signalPower;
+            }
+            set
+            {
+                _signalPower = value;
+            }
         }
 
         public override string ToString()
         {
-            return ID.ToString();
+            return ID.ToString() + "/" + SignalPower.ToString();
         }
     }
 }
