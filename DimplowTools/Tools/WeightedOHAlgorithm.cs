@@ -6,13 +6,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Documents;
 
 namespace DimplowTools.Tools
 {
-    //Переделай его теперь под весовые нагрузки и накинь многопточку. И будем нам счастье, дальше только сидеть и графики пилить. Думаю к среде управлюсь.
-    //Как-то он капец как плохо работает. Оставлю так как есть, может потом пригодится, но лучше пользоваться взвешенной версией, выставляя весы единицами
-    internal class OrlinHaoAlgorithm
+    internal class WeightedOHAlgorithm
     {
         List<List<int>> DormantSet;
         int DMax;
@@ -21,9 +18,11 @@ namespace DimplowTools.Tools
         int SCount = 0;
         List<bool> S;
         int tStrich;
-        int BestValue;
+        public int BestValue;
+        public int MinCutAmount;
+        int _startVertex;
         BidirectionalGraph<WeightedVertex, DirectedEdge<WeightedVertex>> _graph;
-        public OrlinHaoAlgorithm(BidirectionalGraph<WeightedVertex, DirectedEdge<WeightedVertex>> graph)
+        public WeightedOHAlgorithm(BidirectionalGraph<WeightedVertex, DirectedEdge<WeightedVertex>> graph, int startVertex)
         {
             DormantSet = new List<List<int>>();
             W = new List<int>();
@@ -31,13 +30,20 @@ namespace DimplowTools.Tools
             SCount = 0;
             S = new List<bool>();
             BestValue = int.MaxValue;
+            MinCutAmount = int.MaxValue;
             _graph = graph;
+            _startVertex = startVertex;
+
             for (int i = 0; i < _graph.VertexCount; i++)
             {
                 W.Add(i);
                 d.Add(1);
                 S.Add(false);
             }
+
+            foreach (DirectedEdge<WeightedVertex> arc in _graph.Edges)
+                arc.OccupiedWeight = 0;
+
         }
 
         public int FindMinCut()
@@ -49,38 +55,50 @@ namespace DimplowTools.Tools
                 {
                     foreach (DirectedEdge<WeightedVertex> arc in _graph.OutEdges(_graph.Vertices.ElementAt(W.First())))
                     {
-                        if (W.Contains(arc.Source.ID) && W.Contains(arc.Target.ID) && d[arc.Source.ID] == d[arc.Target.ID] + 1 && arc.IsVisited == false)
-                            arc.IsVisited = true;
+                        if (W.Contains(arc.Source.ID) && W.Contains(arc.Target.ID) && d[arc.Source.ID] == d[arc.Target.ID] + 1)
+                            arc.OccupiedWeight += Math.Min(e(_graph.Vertices.ElementAt(W.First())), r(arc));
                     }
                     ModifiedRelabel(W.First());
                 }
 
                 for (int i = 0; i < DormantSet.Count; i++)
                 {
+                    int cutSize = 0;
                     int cutCounter = 0;
                     foreach (int node in DormantSet[i])
                     {
                         foreach (DirectedEdge<WeightedVertex> edge in _graph.OutEdges(_graph.Vertices.ElementAt(node)))
                             if (!DormantSet[i].Contains(edge.Target.ID))
+                            {
+                                cutSize += edge.OccupiedWeight > edge.Weight ? edge.Weight : edge.OccupiedWeight;
                                 cutCounter++;
+                            }
                     }
-                    if (BestValue > cutCounter)
-                        BestValue = cutCounter;
+
+                    if (BestValue > cutSize && cutSize > 0)
+                        BestValue = cutSize;
+
+                    if (MinCutAmount > cutCounter && cutCounter > 0)
+                        MinCutAmount = cutCounter;
                 }
-                SelectNewSink();
+                //Не забудь, попробуй провести исследование с этим параметром и без него
+                if (SelectNewSink() == 1)
+                    return BestValue;
             }
             return BestValue;
         }
 
         private void ModifiedInitialize()
         {
-            foreach (DirectedEdge<WeightedVertex> edge in _graph.OutEdges(_graph.Vertices.ElementAt(1)))
-                edge.IsVisited = true;
+            Random random = new Random();
+            foreach (DirectedEdge<WeightedVertex> edge in _graph.OutEdges(_graph.Vertices.ElementAt(_startVertex)))
+                edge.OccupiedWeight = r(edge);
             DormantSet.Add(new List<int>());
-            DormantSet[0].Add(1);
+            DormantSet[0].Add(_startVertex);
             DMax = 0;
-            W.Remove(1);
-            tStrich = 2;
+            W.Remove(_startVertex);
+            while(tStrich == _startVertex)
+                tStrich = random.Next(0, _graph.VertexCount);
             d[tStrich] = 0;
             //Я их уже сделал единичками в констуркторе, так что живем
         }
@@ -91,18 +109,6 @@ namespace DimplowTools.Tools
             bool noArc = true;
             int minD = int.MaxValue;
             List<int> R = new List<int>();
-            foreach (DirectedEdge<WeightedVertex> arc in _graph.OutEdges(_graph.Vertices.ElementAt(vertexID)))
-            {
-                if (W.Contains(arc.Target.ID))
-                {
-                    noArc = false;
-                    if (arc.IsVisited == false)
-                    {
-                        if (d[arc.Target.ID] + 1 <= minD)
-                            minD = d[arc.Target.ID] + 1;
-                    }
-                }
-            }
 
             for (int i = 0; i < W.Count; i++)
             {
@@ -113,6 +119,20 @@ namespace DimplowTools.Tools
                 }
                 if (d[W[i]] >= d[vertexID])
                     R.Add(W[i]);
+            }
+
+            foreach (DirectedEdge<WeightedVertex> arc in _graph.OutEdges(_graph.Vertices.ElementAt(vertexID)))
+            {
+                if (W.Contains(arc.Target.ID))
+                {
+                    noArc = false;
+                    if (arc.IsVisited == false)
+                    {
+                        //Поидее 0 будет только в стоке, а на него нам смотреть не надо(поидее)
+                        if (d[arc.Target.ID] + 1 <= minD && r(arc) > 0 && d[arc.Target.ID] != 0)
+                            minD = d[arc.Target.ID] + 1;
+                    }
+                }
             }
 
             if (isOnly)
@@ -148,14 +168,13 @@ namespace DimplowTools.Tools
             if (SCount != _graph.VertexCount)
             {
                 foreach (DirectedEdge<WeightedVertex> arc in _graph.OutEdges(_graph.Vertices.ElementAt(tStrich)))
-                {
                     if (!S[arc.Target.ID])
-                        arc.IsVisited = true;
-                }
+                        arc.OccupiedWeight += r(arc);
             }
             //Этот елсе нужен просто как выход из метода.
             else
-                return BestValue;
+                return 2;
+
             if (W.Count == 0)
             {
                 W = DormantSet[DMax];
@@ -169,7 +188,37 @@ namespace DimplowTools.Tools
                     tStrich = node;
                 }
             //Возвращаемое значение - пустышка, не морочь себе голову
-            return BestValue;
+            //Может быть в этом и проблема? Не понять, там quit означает выход из метода, или из всего алгоритма.
+            return 1;
+        }
+
+        private int r(DirectedEdge<WeightedVertex> arc)
+        {
+            int reverseWeight = 0;
+            foreach (DirectedEdge<WeightedVertex> reverseArc in _graph.OutEdges(arc.Target))
+            {
+                if (reverseArc.Target == arc.Source)
+                {
+                    reverseWeight = reverseArc.OccupiedWeight;
+                    break;
+                }
+            }
+            return arc.Weight - arc.OccupiedWeight + reverseWeight;
+        }
+
+        private int e(WeightedVertex i)
+        {
+            int inSumm = 0, outSumm = 0;
+
+            foreach (DirectedEdge<WeightedVertex> arc in _graph.InEdges(i))
+                inSumm += arc.Weight;
+
+            foreach (DirectedEdge<WeightedVertex> arc in _graph.OutEdges(i))
+                outSumm += arc.Weight;
+
+            return inSumm - outSumm;
         }
     }
+
+
 }

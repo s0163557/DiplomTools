@@ -11,11 +11,16 @@ namespace DimplowTools.Data
     internal class DirectedEdge<T> : IEdge<T>
     {
         private T _source, _target;
-        public DirectedEdge(T source, T target)
+        private int _weight, _occupiedWeight;
+
+        public DirectedEdge(T source, T target, int weight)
         {
             _source = source;
             _target = target;
+            _weight = weight;
+            _occupiedWeight = 0;
         }
+
         public T Source
         {
             get
@@ -43,5 +48,31 @@ namespace DimplowTools.Data
         }
 
         public bool IsVisited = false;
+        public int Weight
+        {
+            get
+            {
+                return _weight;
+            }
+            set
+            {
+                _weight = value;
+            }
+        }
+        public int OccupiedWeight
+        {
+            get
+            {
+                return _occupiedWeight;
+            }
+            set
+            {
+                _occupiedWeight = value;
+            }
+        }
+        public override string ToString()
+        {
+            return _source.ToString() + "->" + _target.ToString() + "|" + _occupiedWeight + "/" + _weight;
+        }
     }
 }

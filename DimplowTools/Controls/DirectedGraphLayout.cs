@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace DimplowTools.Controls
 {
-    internal class DirectedGraphLayout : GraphLayout<Vertex, DirectedEdge<Vertex>, BidirectionalGraph<Vertex, DirectedEdge<Vertex>>>
+    internal class DirectedGraphLayout : GraphLayout<WeightedVertex, DirectedEdge<WeightedVertex>, BidirectionalGraph<WeightedVertex, DirectedEdge<WeightedVertex>>>
     {
     }
 }
